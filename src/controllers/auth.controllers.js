@@ -8,8 +8,7 @@ export async function signUp(req, res) {
     const dateNow = dayjs().format("DD-MM-YYYY")
 
     if(password != confirmPassword) return res.status(422).send("As senhas não são iguais!")
-    console.log(dateNow)
-   
+    console.log(dateNow)   
 
     try {
         const emailExist = await db.query(`
