@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { getUser, getUserRanking } from "../controllers/user.controllers.js"
+import { getUserByEmailDB, getUserRanking } from "../controllers/user.controllers.js"
 
 const userRouter = Router()
 
-userRouter.get("/users/me", getUser)
+userRouter.get("/users/me", getUserByEmailDB)
 userRouter.get("/ranking", getUserRanking)
 
 export default userRouter
