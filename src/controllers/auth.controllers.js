@@ -1,31 +1,32 @@
-import dayjs from "dayjs"
 import { db } from "../database/database.connection.js"
 import { v4 as uuid } from "uuid"
+import bcrypt from "bcrypt"
+import { getUserByEmailDB, signUpDB } from "../repositories/auth.repository.js"
 
+//desestruturar as informações do corpo da requisição aqui e passar para cada função de acesso ao DB somente a informação necessária (otimiza o código).
+
+//Função de cadastro
 
 export async function signUp(req, res) {
-    const {name, email, password, confirmPassword} = req.body
-    const dateNow = dayjs().format("DD-MM-YYYY")
-
-    if(password != confirmPassword) return res.status(422).send("As senhas não são iguais!")
-    console.log(dateNow)   
+    const {name, email, password} = req.body
 
     try {
-        const emailExist = await db.query(`
-            SELECT * FROM users WHERE email = $1;
-        `, [email])
-        if(emailExist.rowCount !== 0) return res.status(409).send("E-mail já cadastrado!")
+        //buscar no banco se o email já está cadastrado
+        const emailExist = await getUserByEmailDB(email)
+        if(emailExist.rowCount !== 0) return res.status(409).send({message: "E-mail já cadastrado!"})
 
-        await db.query(`
-            INSERT INTO users (name, email, password, "createdAt") VALUES ($1, $2, $3, $4);
-        `, [name, email, password, dateNow])      
+        const hash = bcrypt.hashSync(password, 10)
+        //cadastrar na tabela "users"
+        await signUpDB(name, email, hash)
         res.sendStatus(201)
 
     } catch(err) {
-        console.log("entrou no catch")
         res.send(err.message)
     }
 }
+
+
+//Função de login
 
 export async function signIn(req, res) {
     const {email, password} = req.body
