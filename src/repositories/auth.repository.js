@@ -8,3 +8,10 @@ export function createSessionDB(user_id, token) {
     [user_id, token]
   )
 }
+
+export function findSessionDB(token) {
+  return db.query(`
+    SELECT user_id FROM session WHERE token = $1;`, 
+    [token]
+  )
+}
