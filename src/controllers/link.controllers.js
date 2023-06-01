@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid"
-import { addViewsDB, createShortLinkDB, getLinkDB, openLinkDB } from "../repositories/link.repository.js"
+import { addViewsDB, createShortLinkDB, deleteLinkDB, getLinkDB, getLinkUserDB, openLinkDB } from "../repositories/link.repository.js"
 const nanoid = customAlphabet('123456789abcdef', 10)
 
 export async function shortenLink(req, res) {
@@ -47,5 +47,17 @@ export async function openLink(req, res) {
 
 
 export async function deleteLink(req, res) {
-  res.send("deleteLink")
+  const {id} = req.params
+  const {user_id} = res.locals
+  try {
+    const result = await getLinkUserDB(id)
+    if(result.rowCount === 0) return res.status(404).send({message: "URL não existe!"})
+    if(result.rows[0].user_id !== user_id) return res.status(401).send({message: "Usuário inválido para deletar este link!"})
+
+    await deleteLinkDB(id)
+    res.sendStatus(204)
+    
+  } catch(err) {
+    res.status(500).send(err.message)
+  }
 }
