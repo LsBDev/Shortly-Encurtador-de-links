@@ -8,4 +8,25 @@ export function createShortLinkDB(url, shortLink, user_id) {
     [url, shortLink, user_id]
   )
 }
-// 
+
+export function getLinkDB(id) {
+  return db.query(`
+    SELECT id, url, short_url FROM link WHERE id = $1;`,
+    [id]
+  )
+}
+
+export function openLinkDB(shortUrl) {
+  return db.query(`
+  SELECT url FROM link WHERE short_url = $1
+  `, [shortUrl])
+}
+
+
+//função que incrementa o contador de visualização.
+export function addViewsDB(shortUrl) {
+  return db.query(`
+    UPDATE link SET views_count = views_count + 1 WHERE short_url = $1;`,
+    [shortUrl]
+  )
+}

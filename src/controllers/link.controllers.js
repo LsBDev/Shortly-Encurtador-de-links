@@ -1,6 +1,5 @@
 import { customAlphabet } from "nanoid"
-import { createShortLinkDB } from "../repositories/link.repository.js"
-import { getLinkDB } from "../repositories/user.repository.js"
+import { addViewsDB, createShortLinkDB, getLinkDB, openLinkDB } from "../repositories/link.repository.js"
 const nanoid = customAlphabet('123456789abcdef', 10)
 
 export async function shortenLink(req, res) {
@@ -28,11 +27,25 @@ export async function getLink(req, res) {
   } catch(err) {
     res.status(500).send(err)
   }
+}
 
-}
+
 export async function openLink(req, res) {
-  res.send("openLink")
+  const {shortUrl} = req.params
+  // const {short_url} = req.params
+  try {
+    const result = await openLinkDB(shortUrl)
+    if(result.rowCount === 0) return res.status(404).send({message: "URL não existe!"})
+    
+    await addViewsDB(shortUrl)
+    res.redirect(result.rows[0].url)
+
+  } catch(err) {
+    res.status(500).send(err.message)
+  }
 }
+
+
 export async function deleteLink(req, res) {
   res.send("deleteLink")
 }
