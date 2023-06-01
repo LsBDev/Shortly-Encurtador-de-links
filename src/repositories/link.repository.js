@@ -16,6 +16,13 @@ export function getLinkDB(id) {
   )
 }
 
+export function getLinkUserDB(id) {
+  return db.query(`
+    SELECT user_id FROM link WHERE id = $1;`,
+    [id]
+  )
+}
+
 export function openLinkDB(shortUrl) {
   return db.query(`
   SELECT url FROM link WHERE short_url = $1
@@ -29,4 +36,12 @@ export function addViewsDB(shortUrl) {
     UPDATE link SET views_count = views_count + 1 WHERE short_url = $1;`,
     [shortUrl]
   )
+}
+
+export function deleteLinkDB(id) {
+  return db.query(`
+    DELETE FROM link WHERE id = $1;`,
+    [id]
+  )
+
 }
