@@ -38,3 +38,13 @@ export function signUpDB(name, email, password) {
     `, [name, email, password]
   ) 
 }
+
+export function getRankingDB() {
+  return db.query(`
+    SELECT users.id, users.name, COUNT(link.id) link_count, COALESCE(SUM(link.views_count), 0) AS views_count
+      FROM users LEFT JOIN link ON users.id = link.user_id
+    GROUP BY users.id, users.name
+    ORDER BY views_count DESC, link_count DESC 
+    LIMIT 10;
+  `)
+}
