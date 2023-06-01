@@ -1,24 +1,24 @@
-import { db } from "../database/database.connection.js"
+import { getLinkByUserDB, getUserByIdDB } from "../repositories/user.repository.js"
 
-//Se for necessário fazer duas requisições em uma única função de controle, Só fazer duas funções, cada uma com uma requisição, no mesmo arquivo de repositório.
-//retornar diretamente o resultado da query ou guardar em uma variável (depende da situação lá no controle).
+export async function getCurrentUser(req, res) {
+  const {user_id} = res.locals
 
-export function getUserByEmailDB(email) {
-  return db.query(`
-    SELECT * FROM users WHERE email = $1;
-    `, [email]
-  )  
+  try {
+    const {rows: [user]} = await getUserByIdDB(user_id)
+    const {rows: link} = await getLinkByUserDB(user_id)
+    res.send({...user, shortenedUrls: [...link]}) //montando o objeto no formato pedido.
+    
+  } catch(err) {
+    res.status(500).send(err.message)
+  }
 }
-
-export function signUpDB(name, email, password) {
-  return db.query(`
-    INSERT INTO users (name, email, password) VALUES ($1, $2, $3);
-    `, [name, email, password]
-  ) 
-}
-
 
 export async function getUserRanking(req, res) {
-  res.send("getUserRanking")
+
+  try {
+    
+  } catch(err) {
+    res.status(500).send(err.message)
+  }
 }
 
