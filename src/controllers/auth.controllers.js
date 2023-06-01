@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid"
 import bcrypt from "bcrypt"
-import { getUserByEmailDB, signUpDB } from "./user.controllers.js"
 import { createSessionDB } from "../repositories/auth.repository.js"
+import { getUserByEmailDB, signUpDB } from "../repositories/user.repository.js"
 
 //desestruturar as informações do corpo da requisição aqui e passar para cada função de acesso ao DB somente a informação necessária (otimiza o código).
 
